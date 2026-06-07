@@ -1,0 +1,292 @@
+import {
+  Chart,
+  type ChartDataPoint,
+  Host,
+  HStack,
+  Image,
+  ScrollView,
+  Spacer,
+  Text,
+  VStack,
+  ZStack,
+} from "@expo/ui/swift-ui";
+import {
+  background,
+  clipShape,
+  font,
+  foregroundStyle,
+  frame,
+  padding,
+  shapes,
+} from "@expo/ui/swift-ui/modifiers";
+import { type SFSymbol } from "expo-symbols";
+import { PlatformColor, useWindowDimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { secondaryText } from "@/styles";
+
+// Warm coral -> pink -> lavender wash fading into the grouped background, like
+// the Health app Summary screen.
+const SUMMARY_GRADIENT =
+  "linear-gradient(180deg, #F6A98C 0%, #F2A0AE 12%, #E0AAC9 22%, #C8BAE6 32%, rgba(242,242,247,1) 44%)";
+
+const barGray = PlatformColor("systemGray4");
+const barOrange = PlatformColor("systemOrange");
+const clear = "rgba(0, 0, 0, 0)";
+// White fill of the hollow HRV dots; tracks the card surface in light/dark.
+const cardFill = PlatformColor("secondarySystemGroupedBackground");
+
+const HRV_DATA: ChartDataPoint[] = [
+  { x: "1", y: 31 },
+  { x: "2", y: 42 },
+  { x: "3", y: 34 },
+  { x: "4", y: 46 },
+  { x: "5", y: 33 },
+  { x: "6", y: 41 },
+  { x: "7", y: 37 },
+];
+
+const LAST_HRV = HRV_DATA.length - 1;
+// SwiftUI's LineMark ignores per-point color, so the dots are layered as point
+// charts over the line, all sharing the same data domain so they align. Stack
+// order: gray dots (line symbols) -> red endpoint dot -> a card-colored center
+// punched into every dot, turning all of them (red included) into hollow rings.
+const HRV_FILL: ChartDataPoint[] = HRV_DATA.map((point) => ({ ...point, color: cardFill }));
+const HRV_ENDPOINT: ChartDataPoint[] = HRV_DATA.map((point, index) => ({
+  ...point,
+  color: index === LAST_HRV ? PlatformColor("systemRed") : clear,
+}));
+
+const STEPS_DATA: ChartDataPoint[] = [
+  { x: "1", y: 4, color: barGray },
+  { x: "2", y: 5, color: barGray },
+  { x: "3", y: 7, color: barGray },
+  { x: "4", y: 6, color: barGray },
+  { x: "5", y: 8, color: barGray },
+  { x: "6", y: 10, color: barGray },
+  { x: "7", y: 1.5, color: barOrange },
+];
+
+const DISTANCE_DATA: ChartDataPoint[] = [
+  { x: "1", y: 5, color: barGray },
+  { x: "2", y: 4, color: barGray },
+  { x: "3", y: 8, color: barGray },
+  { x: "4", y: 7, color: barGray },
+  { x: "5", y: 9, color: barGray },
+  { x: "6", y: 10, color: barGray },
+  { x: "7", y: 1.5, color: barOrange },
+];
+
+/**
+ * A flat white rounded tile used by the Health summary cards (no drop shadow).
+ */
+function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <VStack
+      alignment="leading"
+      spacing={12}
+      modifiers={[
+        frame({ maxWidth: Infinity, alignment: "leading" }),
+        padding({ horizontal: 16, vertical: 22 }),
+        background(
+          PlatformColor("secondarySystemGroupedBackground"),
+          shapes.roundedRectangle({ cornerRadius: 26 }),
+        ),
+      ]}
+    >
+      {children}
+    </VStack>
+  );
+}
+
+/**
+ * The top row of a card: colored category icon and title on the left, a muted
+ * timestamp and disclosure chevron on the right.
+ */
+function CardHeader({
+  systemName,
+  title,
+  tint,
+  timestamp,
+}: {
+  systemName: SFSymbol;
+  title: string;
+  tint: ReturnType<typeof PlatformColor>;
+  timestamp: string;
+}) {
+  return (
+    <HStack spacing={6}>
+      <Image systemName={systemName} size={18} color={tint} />
+      <Text modifiers={[font({ size: 18, weight: "bold" }), foregroundStyle(tint)]}>{title}</Text>
+      <Spacer />
+      <Text modifiers={[font({ size: 17 }), secondaryText]}>{timestamp}</Text>
+      <Image systemName="chevron.forward" size={14} color={PlatformColor("systemGray2")} />
+    </HStack>
+  );
+}
+
+/**
+ * A large primary metric value with a trailing muted unit, baseline-aligned.
+ */
+function Metric({ value, unit }: { value: string; unit: string }) {
+  return (
+    <HStack alignment="firstTextBaseline" spacing={5}>
+      <Text modifiers={[font({ size: 34, weight: "bold", design: "rounded" })]}>{value}</Text>
+      <Text modifiers={[font({ size: 17, weight: "semibold", design: "rounded" }), secondaryText]}>
+        {unit}
+      </Text>
+    </HStack>
+  );
+}
+
+export default function HealthSummaryScreen() {
+  const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+
+  return (
+    <Host
+      style={{
+        flex: 1,
+        backgroundColor: "#F2F2F7",
+        experimental_backgroundImage: SUMMARY_GRADIENT,
+      }}
+    >
+      <ScrollView>
+        <VStack
+          alignment="leading"
+          spacing={16}
+          modifiers={[
+            padding({ horizontal: 20, top: insets.top + 8, bottom: 120 }),
+            frame({ maxWidth: width, alignment: "leading" }),
+          ]}
+        >
+          <HStack>
+            <Text modifiers={[font({ size: 34, weight: "bold" })]}>Summary</Text>
+            <Spacer />
+            <Image
+              systemName="person.fill"
+              size={22}
+              color="white"
+              modifiers={[
+                frame({ width: 42, height: 42 }),
+                background("#8E93C9", shapes.circle()),
+                clipShape("circle"),
+              ]}
+            />
+          </HStack>
+
+          <HStack alignment="firstTextBaseline">
+            <Text modifiers={[font({ size: 22, weight: "bold" })]}>Pinned</Text>
+            <Spacer />
+            <Text modifiers={[font({ size: 17 }), foregroundStyle(PlatformColor("link"))]}>
+              Edit
+            </Text>
+          </HStack>
+
+          <Card>
+            <CardHeader
+              systemName="heart.fill"
+              title="Heart Rate Variability"
+              tint={PlatformColor("systemRed")}
+              timestamp="Yesterday"
+            />
+            <HStack alignment="bottom">
+              <VStack alignment="leading" spacing={2}>
+                <Text modifiers={[font({ size: 17, weight: "semibold" }), secondaryText]}>
+                  Average
+                </Text>
+                <Metric value="37" unit="ms" />
+              </VStack>
+              <Spacer />
+              <ZStack modifiers={[frame({ width: 150, height: 50 })]}>
+                <Chart
+                  data={HRV_DATA}
+                  type="line"
+                  showGrid={false}
+                  lineStyle={{
+                    color: PlatformColor("systemGray3"),
+                    width: 8,
+                    pointStyle: "circle",
+                    pointSize: 85,
+                  }}
+                  modifiers={[frame({ width: 150, height: 50 })]}
+                />
+                <Chart
+                  data={HRV_ENDPOINT}
+                  type="point"
+                  showGrid={false}
+                  pointStyle={{ pointStyle: "circle", pointSize: 85 }}
+                  modifiers={[frame({ width: 150, height: 50 })]}
+                />
+                <Chart
+                  data={HRV_FILL}
+                  type="point"
+                  showGrid={false}
+                  pointStyle={{ pointStyle: "circle", pointSize: 17 }}
+                  modifiers={[frame({ width: 150, height: 50 })]}
+                />
+              </ZStack>
+            </HStack>
+          </Card>
+
+          <Card>
+            <CardHeader
+              systemName="bed.double.fill"
+              title="Sleep Score"
+              tint={PlatformColor("systemIndigo")}
+              timestamp="Today"
+            />
+            <Text
+              modifiers={[
+                font({ size: 26, weight: "bold", design: "rounded" }),
+                padding({ top: 24, bottom: 4 }),
+              ]}
+            >
+              No Data
+            </Text>
+          </Card>
+
+          <Card>
+            <CardHeader
+              systemName="flame.fill"
+              title="Steps"
+              tint={PlatformColor("systemOrange")}
+              timestamp="15.21"
+            />
+            <HStack alignment="bottom">
+              <Metric value="4,010" unit="steps" />
+              <Spacer />
+              <Chart
+                data={STEPS_DATA}
+                type="bar"
+                showGrid={false}
+                barStyle={{ cornerRadius: 4, width: 10 }}
+                modifiers={[frame({ width: 130, height: 60 })]}
+              />
+            </HStack>
+          </Card>
+
+          <Card>
+            <CardHeader
+              systemName="flame.fill"
+              title="Walking + Running Distance"
+              tint={PlatformColor("systemOrange")}
+              timestamp="15.21"
+            />
+            <HStack alignment="bottom">
+              <Metric value="2.6" unit="km" />
+              <Spacer />
+              <Chart
+                data={DISTANCE_DATA}
+                type="bar"
+                showGrid={false}
+                barStyle={{ cornerRadius: 4, width: 10 }}
+                modifiers={[frame({ width: 130, height: 60 })]}
+              />
+            </HStack>
+          </Card>
+        </VStack>
+      </ScrollView>
+    </Host>
+  );
+}

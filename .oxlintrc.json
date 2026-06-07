@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["./lint-rules/index.mjs"],
+  "rules": {
+    "local/jsdoc-only-on-declarations": "error",
+    "local/no-abbreviated-names": "error",
+    "local/no-ascii-separators": "error",
+    "local/no-em-dash": "error",
+    "local/no-text-on-jsdoc-line": "error"
+  },
+  "ignorePatterns": ["node_modules", "ios", "android", "build", "dist", ".expo", "lint-rules"]
+}
