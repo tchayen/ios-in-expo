@@ -16,8 +16,9 @@ import { PlatformColor } from "react-native";
 
 const BUTTON_SIZE = 44;
 
-// Header overlays the content, so the screen pads its top by this.
-export const NEW_EVENT_HEADER_HEIGHT = 96;
+// Header overlays the content, so the screen pads its top by this: top padding +
+// button row + VStack spacing + segmented control + bottom padding.
+export const NEW_EVENT_HEADER_HEIGHT = 16 + BUTTON_SIZE + 10 + 18 + 8;
 
 function HeaderButton({
   systemName,

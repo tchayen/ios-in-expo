@@ -4,7 +4,6 @@ import {
   Host,
   HStack,
   Image,
-  ScrollView,
   Spacer,
   Text,
   VStack,
@@ -12,16 +11,15 @@ import {
 } from "@expo/ui/swift-ui";
 import {
   background,
-  clipShape,
   font,
   foregroundStyle,
   frame,
+  offset,
   padding,
   shapes,
 } from "@expo/ui/swift-ui/modifiers";
 import { type SFSymbol } from "expo-symbols";
-import { PlatformColor, useWindowDimensions } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { type ColorValue, PlatformColor, ScrollView, StyleSheet } from "react-native";
 
 import { secondaryText } from "@/styles";
 
@@ -30,8 +28,9 @@ import { secondaryText } from "@/styles";
 const SUMMARY_GRADIENT =
   "linear-gradient(180deg, #F6A98C 0%, #F2A0AE 12%, #E0AAC9 22%, #C8BAE6 32%, rgba(242,242,247,1) 44%)";
 
-const barGray = PlatformColor("systemGray4");
-const barOrange = PlatformColor("systemOrange");
+const barGray = PlatformColor("systemGray5");
+// Health's "Steps" orange, pulled slightly redder than systemOrange's amber.
+const stepsOrange = "#FB5B2D";
 const clear = "rgba(0, 0, 0, 0)";
 // White fill of the hollow HRV dots; tracks the card surface in light/dark.
 const cardFill = PlatformColor("secondarySystemGroupedBackground");
@@ -46,11 +45,16 @@ const HRV_DATA: ChartDataPoint[] = [
   { x: "7", y: 37 },
 ];
 
+const lineGray = PlatformColor("systemGray3");
 const LAST_HRV = HRV_DATA.length - 1;
-// SwiftUI's LineMark ignores per-point color, so the dots are layered as point
-// charts over the line, all sharing the same data domain so they align. Stack
-// order: gray dots (line symbols) -> red endpoint dot -> a card-colored center
-// punched into every dot, turning all of them (red included) into hollow rings.
+// `lineStyle.width` is a no-op in this @expo/ui build (native applies .lineStyle
+// twice and the 1px dash style wins), so the thick line is faked by stacking
+// several 1px line layers a pixel apart. The dots are then layered as point
+// charts on top, all sharing the same data domain so they align. Stack order:
+// line band -> gray dots -> red endpoint -> a card-colored center punched into
+// every dot, turning all of them (red included) into hollow rings.
+const HRV_LINE_OFFSETS = [-1, 0, 1];
+const HRV_DOTS: ChartDataPoint[] = HRV_DATA.map((point) => ({ ...point, color: lineGray }));
 const HRV_FILL: ChartDataPoint[] = HRV_DATA.map((point) => ({ ...point, color: cardFill }));
 const HRV_ENDPOINT: ChartDataPoint[] = HRV_DATA.map((point, index) => ({
   ...point,
@@ -64,7 +68,7 @@ const STEPS_DATA: ChartDataPoint[] = [
   { x: "4", y: 6, color: barGray },
   { x: "5", y: 8, color: barGray },
   { x: "6", y: 10, color: barGray },
-  { x: "7", y: 1.5, color: barOrange },
+  { x: "7", y: 1.5, color: stepsOrange },
 ];
 
 const DISTANCE_DATA: ChartDataPoint[] = [
@@ -74,12 +78,9 @@ const DISTANCE_DATA: ChartDataPoint[] = [
   { x: "4", y: 7, color: barGray },
   { x: "5", y: 9, color: barGray },
   { x: "6", y: 10, color: barGray },
-  { x: "7", y: 1.5, color: barOrange },
+  { x: "7", y: 1.5, color: stepsOrange },
 ];
 
-/**
- * A flat white rounded tile used by the Health summary cards (no drop shadow).
- */
 function Card({ children }: { children: React.ReactNode }) {
   return (
     <VStack
@@ -88,10 +89,7 @@ function Card({ children }: { children: React.ReactNode }) {
       modifiers={[
         frame({ maxWidth: Infinity, alignment: "leading" }),
         padding({ horizontal: 16, vertical: 22 }),
-        background(
-          PlatformColor("secondarySystemGroupedBackground"),
-          shapes.roundedRectangle({ cornerRadius: 26 }),
-        ),
+        background(cardFill, shapes.roundedRectangle({ cornerRadius: 26 })),
       ]}
     >
       {children}
@@ -99,10 +97,6 @@ function Card({ children }: { children: React.ReactNode }) {
   );
 }
 
-/**
- * The top row of a card: colored category icon and title on the left, a muted
- * timestamp and disclosure chevron on the right.
- */
 function CardHeader({
   systemName,
   title,
@@ -111,7 +105,7 @@ function CardHeader({
 }: {
   systemName: SFSymbol;
   title: string;
-  tint: ReturnType<typeof PlatformColor>;
+  tint: ColorValue;
   timestamp: string;
 }) {
   return (
@@ -125,9 +119,6 @@ function CardHeader({
   );
 }
 
-/**
- * A large primary metric value with a trailing muted unit, baseline-aligned.
- */
 function Metric({ value, unit }: { value: string; unit: string }) {
   return (
     <HStack alignment="firstTextBaseline" spacing={5}>
@@ -140,41 +131,18 @@ function Metric({ value, unit }: { value: string; unit: string }) {
 }
 
 export default function HealthSummaryScreen() {
-  const { width } = useWindowDimensions();
-  const insets = useSafeAreaInsets();
-
   return (
-    <Host
-      style={{
-        flex: 1,
-        backgroundColor: "#F2F2F7",
-        experimental_backgroundImage: SUMMARY_GRADIENT,
-      }}
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.content}
+      contentInsetAdjustmentBehavior="automatic"
     >
-      <ScrollView>
+      <Host matchContents={{ vertical: true }} style={styles.host}>
         <VStack
           alignment="leading"
           spacing={16}
-          modifiers={[
-            padding({ horizontal: 20, top: insets.top + 8, bottom: 120 }),
-            frame({ maxWidth: width, alignment: "leading" }),
-          ]}
+          modifiers={[frame({ maxWidth: Infinity, alignment: "leading" })]}
         >
-          <HStack>
-            <Text modifiers={[font({ size: 34, weight: "bold" })]}>Summary</Text>
-            <Spacer />
-            <Image
-              systemName="person.fill"
-              size={22}
-              color="white"
-              modifiers={[
-                frame({ width: 42, height: 42 }),
-                background("#8E93C9", shapes.circle()),
-                clipShape("circle"),
-              ]}
-            />
-          </HStack>
-
           <HStack alignment="firstTextBaseline">
             <Text modifiers={[font({ size: 22, weight: "bold" })]}>Pinned</Text>
             <Spacer />
@@ -199,30 +167,35 @@ export default function HealthSummaryScreen() {
               </VStack>
               <Spacer />
               <ZStack modifiers={[frame({ width: 150, height: 50 })]}>
+                {HRV_LINE_OFFSETS.map((dy) => (
+                  <Chart
+                    key={dy}
+                    data={HRV_DATA}
+                    type="line"
+                    showGrid={false}
+                    lineStyle={{ color: lineGray, pointStyle: "circle", pointSize: 1 }}
+                    modifiers={[frame({ width: 150, height: 50 }), offset({ y: dy })]}
+                  />
+                ))}
                 <Chart
-                  data={HRV_DATA}
-                  type="line"
+                  data={HRV_DOTS}
+                  type="point"
                   showGrid={false}
-                  lineStyle={{
-                    color: PlatformColor("systemGray3"),
-                    width: 8,
-                    pointStyle: "circle",
-                    pointSize: 85,
-                  }}
+                  pointStyle={{ pointStyle: "circle", pointSize: 115 }}
                   modifiers={[frame({ width: 150, height: 50 })]}
                 />
                 <Chart
                   data={HRV_ENDPOINT}
                   type="point"
                   showGrid={false}
-                  pointStyle={{ pointStyle: "circle", pointSize: 85 }}
+                  pointStyle={{ pointStyle: "circle", pointSize: 115 }}
                   modifiers={[frame({ width: 150, height: 50 })]}
                 />
                 <Chart
                   data={HRV_FILL}
                   type="point"
                   showGrid={false}
-                  pointStyle={{ pointStyle: "circle", pointSize: 17 }}
+                  pointStyle={{ pointStyle: "circle", pointSize: 32 }}
                   modifiers={[frame({ width: 150, height: 50 })]}
                 />
               </ZStack>
@@ -250,7 +223,7 @@ export default function HealthSummaryScreen() {
             <CardHeader
               systemName="flame.fill"
               title="Steps"
-              tint={PlatformColor("systemOrange")}
+              tint={stepsOrange}
               timestamp="15.21"
             />
             <HStack alignment="bottom">
@@ -260,8 +233,8 @@ export default function HealthSummaryScreen() {
                 data={STEPS_DATA}
                 type="bar"
                 showGrid={false}
-                barStyle={{ cornerRadius: 4, width: 10 }}
-                modifiers={[frame({ width: 130, height: 60 })]}
+                barStyle={{ cornerRadius: 2, width: 12 }}
+                modifiers={[frame({ width: 112, height: 60 })]}
               />
             </HStack>
           </Card>
@@ -270,7 +243,7 @@ export default function HealthSummaryScreen() {
             <CardHeader
               systemName="flame.fill"
               title="Walking + Running Distance"
-              tint={PlatformColor("systemOrange")}
+              tint={stepsOrange}
               timestamp="15.21"
             />
             <HStack alignment="bottom">
@@ -280,13 +253,19 @@ export default function HealthSummaryScreen() {
                 data={DISTANCE_DATA}
                 type="bar"
                 showGrid={false}
-                barStyle={{ cornerRadius: 4, width: 10 }}
-                modifiers={[frame({ width: 130, height: 60 })]}
+                barStyle={{ cornerRadius: 2, width: 12 }}
+                modifiers={[frame({ width: 112, height: 60 })]}
               />
             </HStack>
           </Card>
         </VStack>
-      </ScrollView>
-    </Host>
+      </Host>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  scroll: { backgroundColor: "#F2F2F7", experimental_backgroundImage: SUMMARY_GRADIENT, flex: 1 },
+  content: { gap: 16, paddingBottom: 24, paddingHorizontal: 20 },
+  host: { backgroundColor: "transparent", width: "100%" },
+});

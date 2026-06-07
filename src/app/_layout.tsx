@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import { PlatformColor } from "react-native";
 
 import { NewEventHeader } from "@/components/new-event-header";
@@ -8,7 +8,7 @@ export default function RootLayout() {
     <Stack
       screenOptions={{ headerLargeTitleEnabled: true, headerBackButtonDisplayMode: "minimal" }}
     >
-      <Stack.Screen name="index" options={{ title: "Examples" }} />
+      <Stack.Screen name="index" options={{ title: "iOS in Expo" }} />
       <Stack.Screen name="settings" options={{ title: "Settings" }} />
       <Stack.Screen
         name="personal-hotspot"
@@ -41,6 +41,26 @@ export default function RootLayout() {
           header: () => <NewEventHeader />,
         }}
       />
+      <Stack.Screen
+        name="view-options"
+        options={{
+          title: "View Options",
+          presentation: "formSheet",
+          headerLargeTitleEnabled: false,
+          contentStyle: { backgroundColor: PlatformColor("systemGroupedBackground") },
+          sheetAllowedDetents: [0.6],
+          sheetGrabberVisible: false,
+        }}
+      >
+        <Stack.Toolbar placement="right">
+          <Stack.Toolbar.Button
+            icon="checkmark"
+            variant="prominent"
+            accessibilityLabel="Done"
+            onPress={() => router.back()}
+          />
+        </Stack.Toolbar>
+      </Stack.Screen>
       <Stack.Screen
         name="sign-in"
         options={{

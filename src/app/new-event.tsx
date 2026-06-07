@@ -11,16 +11,14 @@ import {
   TextField,
   Toggle,
 } from "@expo/ui/swift-ui";
-import { buttonStyle, padding, pickerStyle, tag, tint } from "@expo/ui/swift-ui/modifiers";
+import { buttonStyle, padding, pickerStyle, tag } from "@expo/ui/swift-ui/modifiers";
 import { useState } from "react";
 import { PlatformColor } from "react-native";
 
 import { DateTimeRow } from "@/components/date-time-row";
 import { LinkRow } from "@/components/link-row";
 import { NEW_EVENT_HEADER_HEIGHT } from "@/components/new-event-header";
-import { secondaryText } from "@/styles";
-
-const menuTint = tint(PlatformColor("secondaryLabel"));
+import { menuTint, secondaryText } from "@/styles";
 
 const ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 

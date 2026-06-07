@@ -10,13 +10,14 @@ import {
   Toggle,
   VStack,
 } from "@expo/ui/swift-ui";
-import { buttonStyle, font, foregroundStyle } from "@expo/ui/swift-ui/modifiers";
+import { buttonStyle, font } from "@expo/ui/swift-ui/modifiers";
 import { router } from "expo-router";
 import { useState } from "react";
 import { PlatformColor } from "react-native";
 
 import { Chevron } from "@/components/chevron";
 import { LinkRow } from "@/components/link-row";
+import { secondaryText } from "@/styles";
 
 export default function SettingsScreen() {
   const [airplaneMode, setAirplaneMode] = useState(false);
@@ -34,12 +35,7 @@ export default function SettingsScreen() {
               />
               <VStack alignment="leading" spacing={2}>
                 <Text modifiers={[font({ size: 21, weight: "semibold" })]}>Edward Expo</Text>
-                <Text
-                  modifiers={[
-                    font({ size: 13 }),
-                    foregroundStyle({ type: "hierarchical", style: "secondary" }),
-                  ]}
-                >
+                <Text modifiers={[font({ size: 13 }), secondaryText]}>
                   Apple Account, iCloud+, and more
                 </Text>
               </VStack>

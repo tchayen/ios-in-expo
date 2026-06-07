@@ -1,6 +1,7 @@
-import { foregroundStyle } from "@expo/ui/swift-ui/modifiers";
+import { foregroundStyle, tint } from "@expo/ui/swift-ui/modifiers";
+import { PlatformColor } from "react-native";
 
-/**
- * Muted secondary text styling, matching iOS `secondaryLabel`.
- */
 export const secondaryText = foregroundStyle({ type: "hierarchical", style: "secondary" });
+
+// Grays a menu picker's value and chevron instead of the default accent.
+export const menuTint = tint(PlatformColor("secondaryLabel"));

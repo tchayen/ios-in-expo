@@ -13,6 +13,7 @@ export default function Index() {
           <LinkRow title="TestFlight Onboarding" onPress={() => router.push("/tf-onboarding")} />
           <LinkRow title="New Event" onPress={() => router.push("/new-event")} />
           <LinkRow title="Sign In" onPress={() => router.push("/sign-in")} />
+          <LinkRow title="View Options" onPress={() => router.push("/view-options")} />
         </Section>
       </Form>
     </Host>
