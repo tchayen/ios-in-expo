@@ -1,9 +1,10 @@
 import {
   Button,
-  Form,
+  DatePicker,
   Host,
   HStack,
   Image,
+  List,
   Picker,
   Section,
   Spacer,
@@ -11,17 +12,33 @@ import {
   TextField,
   Toggle,
 } from "@expo/ui/swift-ui";
-import { buttonStyle, padding, pickerStyle, tag } from "@expo/ui/swift-ui/modifiers";
+import {
+  buttonStyle,
+  datePickerStyle,
+  listRowInsets,
+  listSectionMargins,
+  listStyle,
+  padding,
+  pickerStyle,
+  tag,
+} from "@expo/ui/swift-ui/modifiers";
 import { router } from "expo-router";
 import { useState } from "react";
 import { PlatformColor } from "react-native";
 
-import { DateTimeRow } from "@/components/date-time-row";
 import { LinkRow } from "@/components/link-row";
 import { NEW_EVENT_HEADER_HEIGHT } from "@/components/new-event-header";
 import { menuTint, secondaryText } from "@/styles";
 
 const ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
+
+// Trim the row toward the classic grouped-table height (iOS 16+ List rows are
+// taller than Calendar's) and inset the cards further from the edges (iOS 26+);
+// `listSectionMargins` only applies per-section, not from the List.
+const SECTION_MODS = [
+  listRowInsets({ top: 7, leading: 16, bottom: 7, trailing: 16 }),
+  listSectionMargins({ edges: "horizontal", length: 22 }),
+];
 
 function MenuChevron() {
   return (
@@ -38,18 +55,32 @@ export default function NewEventScreen() {
   const [repeat, setRepeat] = useState("Never");
   const [alert, setAlert] = useState("None");
 
+  const dateComponents = allDay ? (["date"] as const) : (["date", "hourAndMinute"] as const);
+
   return (
     <Host style={{ flex: 1, backgroundColor: "transparent" }}>
-      <Form modifiers={[padding({ top: NEW_EVENT_HEADER_HEIGHT })]}>
-        <Section>
+      <List modifiers={[listStyle("insetGrouped"), padding({ top: NEW_EVENT_HEADER_HEIGHT })]}>
+        <Section modifiers={SECTION_MODS}>
           <TextField placeholder="Title" />
           <TextField placeholder="Location or Video Call" />
         </Section>
 
-        <Section>
+        <Section modifiers={SECTION_MODS}>
           <Toggle isOn={allDay} onIsOnChange={setAllDay} label="All-day" />
-          <DateTimeRow label="Starts" value={startsAt} allDay={allDay} onChange={setStartsAt} />
-          <DateTimeRow label="Ends" value={endsAt} allDay={allDay} onChange={setEndsAt} />
+          <DatePicker
+            title="Starts"
+            displayedComponents={[...dateComponents]}
+            selection={startsAt}
+            onDateChange={setStartsAt}
+            modifiers={[datePickerStyle("compact")]}
+          />
+          <DatePicker
+            title="Ends"
+            displayedComponents={[...dateComponents]}
+            selection={endsAt}
+            onDateChange={setEndsAt}
+            modifiers={[datePickerStyle("compact")]}
+          />
           <Picker
             label="Travel Time"
             selection={travelTime}
@@ -63,7 +94,7 @@ export default function NewEventScreen() {
           </Picker>
         </Section>
 
-        <Section>
+        <Section modifiers={SECTION_MODS}>
           <Picker
             label="Repeat"
             selection={repeat}
@@ -78,7 +109,7 @@ export default function NewEventScreen() {
           </Picker>
         </Section>
 
-        <Section>
+        <Section modifiers={SECTION_MODS}>
           <Button modifiers={[buttonStyle("plain")]} onPress={() => router.push("/placeholder")}>
             <HStack spacing={8}>
               <Text>Calendar</Text>
@@ -91,7 +122,7 @@ export default function NewEventScreen() {
           <LinkRow title="Invitees" value="None" onPress={() => router.push("/placeholder")} />
         </Section>
 
-        <Section>
+        <Section modifiers={SECTION_MODS}>
           <Picker
             label="Alert"
             selection={alert}
@@ -104,7 +135,15 @@ export default function NewEventScreen() {
             <Text modifiers={[tag("30 minutes before")]}>30 minutes before</Text>
           </Picker>
         </Section>
-      </Form>
+
+        <Section modifiers={SECTION_MODS}>
+          <Button
+            label="Add attachment"
+            onPress={() => router.push("/placeholder")}
+            modifiers={[buttonStyle("plain"), secondaryText]}
+          />
+        </Section>
+      </List>
     </Host>
   );
 }
