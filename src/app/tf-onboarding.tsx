@@ -50,7 +50,7 @@ export default function TestFlightOnboardingScreen() {
         spacing={28}
         modifiers={[
           padding({ horizontal: 32, top: 64, bottom: 24 }),
-          frame({ maxWidth: width, maxHeight: 10000 }),
+          frame({ maxWidth: Infinity, maxHeight: Infinity }),
         ]}
       >
         <VStack alignment="leading" spacing={2}>
@@ -95,7 +95,7 @@ export default function TestFlightOnboardingScreen() {
           </Text>
         </VStack>
 
-        <HStack modifiers={[frame({ maxWidth: width })]}>
+        <HStack modifiers={[frame({ maxWidth: Infinity })]}>
           <Spacer />
           <Button
             onPress={() => router.back()}

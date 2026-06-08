@@ -44,8 +44,12 @@ export function DateTimeRow({
 }) {
   const [mode, setMode] = useState<Mode>("none");
 
-  const dateLabel = `${value.getDate()}. ${value.toLocaleDateString("en-US", { month: "short" })} ${value.getFullYear()}`;
-  const timeLabel = value.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const dateLabel = value.toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+  const timeLabel = value.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 
   return (
     <>

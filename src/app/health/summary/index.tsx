@@ -31,7 +31,7 @@ const SUMMARY_GRADIENT =
 const barGray = PlatformColor("systemGray5");
 // Health's "Steps" orange, pulled slightly redder than systemOrange's amber.
 const stepsOrange = "#FB5B2D";
-const clear = "rgba(0, 0, 0, 0)";
+const clear = "transparent";
 // White fill of the hollow HRV dots; tracks the card surface in light/dark.
 const cardFill = PlatformColor("secondarySystemGroupedBackground");
 

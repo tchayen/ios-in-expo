@@ -25,17 +25,12 @@ import {
 } from "@expo/ui/swift-ui/modifiers";
 import { router } from "expo-router";
 import { useState } from "react";
-import { PlatformColor, useWindowDimensions } from "react-native";
+import { PlatformColor } from "react-native";
 
 const fieldPadding = padding({ horizontal: 16, vertical: 16 });
 
-/**
- * A full-width solid capsule button matching the iOS App Store sign-in sheet.
- * `prominent` is the filled blue primary action with white text; otherwise it is
- * the white Cancel pill. Built as a solid fill clipped to a capsule rather than a
- * system glass style, because the reference sheet predates liquid glass and the
- * `glassProminent`/`glass` styles add a specular rim that does not match it.
- */
+// Solid capsule fill rather than a `glass`/`glassProminent` style: the App Store
+// sign-in sheet predates liquid glass, and those styles add a specular rim.
 function SheetButton({
   title,
   onPress,
@@ -45,15 +40,13 @@ function SheetButton({
   onPress: () => void;
   prominent?: boolean;
 }) {
-  const { width } = useWindowDimensions();
-
   return (
     <Button modifiers={[buttonStyle("plain")]} onPress={onPress}>
       <Text
         modifiers={[
           font({ size: 18, weight: "semibold" }),
           foregroundStyle(prominent ? "white" : PlatformColor("label")),
-          frame({ maxWidth: width }),
+          frame({ maxWidth: Infinity }),
           padding({ vertical: 16 }),
           background(prominent ? PlatformColor("systemBlue") : PlatformColor("systemBackground")),
           clipShape("capsule"),
@@ -67,7 +60,6 @@ function SheetButton({
 }
 
 export default function SignInScreen() {
-  const { width } = useWindowDimensions();
   const [email, setEmail] = useState("");
 
   const hasEmail = email.trim().length > 0;
@@ -79,7 +71,7 @@ export default function SignInScreen() {
         spacing={28}
         modifiers={[
           padding({ horizontal: 20, top: 88 }),
-          frame({ maxWidth: width, maxHeight: 10000 }),
+          frame({ maxWidth: Infinity, maxHeight: Infinity }),
         ]}
       >
         <Text modifiers={[font({ size: 24, weight: "bold" })]}>Sign In to Complete Purchase</Text>
@@ -120,7 +112,10 @@ export default function SignInScreen() {
           Forgot password?
         </Text>
 
-        <VStack spacing={12} modifiers={[frame({ maxWidth: width }), padding({ horizontal: 20 })]}>
+        <VStack
+          spacing={12}
+          modifiers={[frame({ maxWidth: Infinity }), padding({ horizontal: 20 })]}
+        >
           <SheetButton title="Sign In" prominent onPress={() => router.back()} />
           <SheetButton title="Cancel" onPress={() => router.back()} />
         </VStack>

@@ -12,6 +12,7 @@ import {
   Toggle,
 } from "@expo/ui/swift-ui";
 import { buttonStyle, padding, pickerStyle, tag } from "@expo/ui/swift-ui/modifiers";
+import { router } from "expo-router";
 import { useState } from "react";
 import { PlatformColor } from "react-native";
 
@@ -22,7 +23,6 @@ import { menuTint, secondaryText } from "@/styles";
 
 const ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 
-// Up and down chevron for menu-style value rows.
 function MenuChevron() {
   return (
     <Image systemName="chevron.up.chevron.down" size={12} color={PlatformColor("systemGray")} />
@@ -79,7 +79,7 @@ export default function NewEventScreen() {
         </Section>
 
         <Section>
-          <Button modifiers={[buttonStyle("plain")]} onPress={() => {}}>
+          <Button modifiers={[buttonStyle("plain")]} onPress={() => router.push("/placeholder")}>
             <HStack spacing={8}>
               <Text>Calendar</Text>
               <Spacer />
@@ -88,7 +88,7 @@ export default function NewEventScreen() {
               <MenuChevron />
             </HStack>
           </Button>
-          <LinkRow title="Invitees" value="None" onPress={() => {}} />
+          <LinkRow title="Invitees" value="None" onPress={() => router.push("/placeholder")} />
         </Section>
 
         <Section>
