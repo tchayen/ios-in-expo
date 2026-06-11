@@ -8,8 +8,10 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "oxlint && eslint src",
-    "lint:fix": "oxlint --fix && eslint --fix src",
+    "lint": "pnpm lint:ox && pnpm lint:eslint",
+    "lint:ox": "oxlint",
+    "lint:eslint": "eslint .",
+    "lint:fix": "pnpm lint:ox --fix && pnpm lint:eslint --fix",
     "fmt": "oxfmt .",
     "fmt:check": "oxfmt --check ."
   },
@@ -28,8 +30,6 @@
     "expo-symbols": "~56.0.6",
     "expo-system-ui": "~56.0.5",
     "expo-web-browser": "~56.0.5",
-    "oxfmt": "^0.53.0",
-    "oxlint": "^1.68.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.85.3",
@@ -42,10 +42,14 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
-    "@typescript-eslint/parser": "^8.57.0",
-    "eslint": "^10.0.3",
-    "eslint-plugin-perfectionist": "^5.6.0",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
-    "typescript": "~6.0.3"
+    "@typescript-eslint/parser": "^8.61.0",
+    "eslint": "^10.4.1",
+    "eslint-plugin-perfectionist": "^5.9.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "oxfmt": "^0.54.0",
+    "oxlint": "^1.69.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.61.0"
   }
 }

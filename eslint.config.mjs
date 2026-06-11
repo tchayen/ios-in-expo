@@ -1,14 +1,17 @@
-import tsParser from "@typescript-eslint/parser";
+import reactHooks from "eslint-plugin-react-hooks";
 import perfectionist from "eslint-plugin-perfectionist";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
+import tseslint from "typescript-eslint";
 import localPlugin from "./lint-rules/index.mjs";
 
-export default [
+export default tseslint.config(
+  {
+    ignores: [".expo/**", "android/**", "build/**", "coverage/**", "dist/**", "ios/**", "node_modules/**"],
+  },
+  ...tseslint.configs.recommended,
+  reactHooks.configs.flat.recommended,
   {
     files: ["src/**/*.ts", "src/**/*.tsx"],
-    languageOptions: {
-      parser: tsParser,
-    },
     plugins: {
       local: localPlugin,
       perfectionist,
@@ -55,4 +58,4 @@ export default [
       ],
     },
   },
-];
+);
