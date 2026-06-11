@@ -40,7 +40,7 @@
     "react/no-children-prop": "warn",
     "react-hooks/rules-of-hooks": "warn",
     "react-hooks/exhaustive-deps": "warn",
-    "typescript/no-explicit-any": "off",
+    "typescript/no-explicit-any": "warn",
     "typescript/consistent-type-imports": ["warn", { "fixStyle": "inline-type-imports" }],
     "typescript/consistent-type-definitions": ["warn", "type"],
     "typescript/no-unnecessary-template-expression": "warn",
