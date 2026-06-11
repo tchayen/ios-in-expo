@@ -11,7 +11,7 @@ export default function ViewOptionsScreen() {
   const [showExtensions, setShowExtensions] = useState(false);
 
   return (
-    <Host style={{ flex: 1, backgroundColor: "transparent" }}>
+    <Host style={{ backgroundColor: "transparent", flex: 1 }}>
       <Form>
         <Section>
           <Picker

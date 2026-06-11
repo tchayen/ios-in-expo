@@ -16,13 +16,13 @@ import { secondaryText } from "@/styles";
 type SymbolName = NonNullable<ComponentProps<typeof Image>["systemName"]>;
 
 function Feature({
+  subtitle,
   systemName,
   title,
-  subtitle,
 }: {
+  subtitle: string;
   systemName: SymbolName;
   title: string;
-  subtitle: string;
 }) {
   return (
     <HStack alignment="top" spacing={16}>
@@ -44,13 +44,13 @@ export default function TestFlightOnboardingScreen() {
   const { width } = useWindowDimensions();
 
   return (
-    <Host style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}>
+    <Host style={{ backgroundColor: PlatformColor("systemBackground"), flex: 1 }}>
       <VStack
         alignment="leading"
         spacing={28}
         modifiers={[
-          padding({ horizontal: 32, top: 64, bottom: 24 }),
-          frame({ maxWidth: Infinity, maxHeight: Infinity }),
+          padding({ bottom: 24, horizontal: 32, top: 64 }),
+          frame({ maxHeight: Infinity, maxWidth: Infinity }),
         ]}
       >
         <VStack alignment="leading" spacing={2}>

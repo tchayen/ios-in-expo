@@ -27,7 +27,7 @@ export default function PersonalHotspotScreen() {
               size={30}
               color="white"
               modifiers={[
-                frame({ width: 60, height: 60 }),
+                frame({ height: 60, width: 60 }),
                 background(PlatformColor("systemGray")),
                 cornerRadius(14),
               ]}

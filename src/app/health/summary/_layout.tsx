@@ -5,13 +5,13 @@ export default function SummaryStackLayout() {
   return (
     <Stack
       screenOptions={{
-        headerLargeTitle: true,
-        headerTransparent: true,
-        headerShadowVisible: false,
-        headerLargeTitleShadowVisible: false,
-        headerLargeStyle: { backgroundColor: "transparent" },
         headerBlurEffect: "none",
+        headerLargeStyle: { backgroundColor: "transparent" },
+        headerLargeTitle: true,
+        headerLargeTitleShadowVisible: false,
+        headerShadowVisible: false,
         headerTitleStyle: { color: PlatformColor("label") },
+        headerTransparent: true,
       }}
     >
       <Stack.Screen name="index" options={{ title: "Summary" }} />

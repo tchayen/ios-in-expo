@@ -7,13 +7,13 @@ import { secondaryText } from "@/styles";
 // `contentShape` makes the whole row (including the `Spacer` gap) hit-testable,
 // not just the rendered text.
 export function LinkRow({
+  onPress,
   title,
   value,
-  onPress,
 }: {
+  onPress: () => void;
   title: string;
   value?: string;
-  onPress: () => void;
 }) {
   return (
     <Button modifiers={[buttonStyle("plain")]} onPress={onPress}>

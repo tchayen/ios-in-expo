@@ -32,13 +32,13 @@ const fieldPadding = padding({ horizontal: 16, vertical: 16 });
 // Solid capsule fill rather than a `glass`/`glassProminent` style: the App Store
 // sign-in sheet predates liquid glass, and those styles add a specular rim.
 function SheetButton({
-  title,
   onPress,
   prominent = false,
+  title,
 }: {
-  title: string;
   onPress: () => void;
   prominent?: boolean;
+  title: string;
 }) {
   return (
     <Button modifiers={[buttonStyle("plain")]} onPress={onPress}>
@@ -50,7 +50,7 @@ function SheetButton({
           padding({ vertical: 16 }),
           background(prominent ? PlatformColor("systemBlue") : PlatformColor("systemBackground")),
           clipShape("capsule"),
-          shadow({ radius: 10, y: 3, color: "rgba(0, 0, 0, 0.12)" }),
+          shadow({ color: "rgba(0, 0, 0, 0.12)", radius: 10, y: 3 }),
         ]}
       >
         {title}
@@ -71,7 +71,7 @@ export default function SignInScreen() {
         spacing={28}
         modifiers={[
           padding({ horizontal: 20, top: 88 }),
-          frame({ maxWidth: Infinity, maxHeight: Infinity }),
+          frame({ maxHeight: Infinity, maxWidth: Infinity }),
         ]}
       >
         <Text modifiers={[font({ size: 24, weight: "bold" })]}>Sign In to Complete Purchase</Text>

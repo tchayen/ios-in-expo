@@ -62,23 +62,23 @@ const HRV_ENDPOINT: ChartDataPoint[] = HRV_DATA.map((point, index) => ({
 }));
 
 const STEPS_DATA: ChartDataPoint[] = [
-  { x: "1", y: 4, color: barGray },
-  { x: "2", y: 5, color: barGray },
-  { x: "3", y: 7, color: barGray },
-  { x: "4", y: 6, color: barGray },
-  { x: "5", y: 8, color: barGray },
-  { x: "6", y: 10, color: barGray },
-  { x: "7", y: 1.5, color: stepsOrange },
+  { color: barGray, x: "1", y: 4 },
+  { color: barGray, x: "2", y: 5 },
+  { color: barGray, x: "3", y: 7 },
+  { color: barGray, x: "4", y: 6 },
+  { color: barGray, x: "5", y: 8 },
+  { color: barGray, x: "6", y: 10 },
+  { color: stepsOrange, x: "7", y: 1.5 },
 ];
 
 const DISTANCE_DATA: ChartDataPoint[] = [
-  { x: "1", y: 5, color: barGray },
-  { x: "2", y: 4, color: barGray },
-  { x: "3", y: 8, color: barGray },
-  { x: "4", y: 7, color: barGray },
-  { x: "5", y: 9, color: barGray },
-  { x: "6", y: 10, color: barGray },
-  { x: "7", y: 1.5, color: stepsOrange },
+  { color: barGray, x: "1", y: 5 },
+  { color: barGray, x: "2", y: 4 },
+  { color: barGray, x: "3", y: 8 },
+  { color: barGray, x: "4", y: 7 },
+  { color: barGray, x: "5", y: 9 },
+  { color: barGray, x: "6", y: 10 },
+  { color: stepsOrange, x: "7", y: 1.5 },
 ];
 
 function Card({ children }: { children: React.ReactNode }) {
@@ -87,7 +87,7 @@ function Card({ children }: { children: React.ReactNode }) {
       alignment="leading"
       spacing={12}
       modifiers={[
-        frame({ maxWidth: Infinity, alignment: "leading" }),
+        frame({ alignment: "leading", maxWidth: Infinity }),
         padding({ horizontal: 16, vertical: 22 }),
         background(cardFill, shapes.roundedRectangle({ cornerRadius: 26 })),
       ]}
@@ -99,14 +99,14 @@ function Card({ children }: { children: React.ReactNode }) {
 
 function CardHeader({
   systemName,
-  title,
-  tint,
   timestamp,
+  tint,
+  title,
 }: {
   systemName: SFSymbol;
-  title: string;
-  tint: ColorValue;
   timestamp: string;
+  tint: ColorValue;
+  title: string;
 }) {
   return (
     <HStack spacing={6}>
@@ -119,11 +119,11 @@ function CardHeader({
   );
 }
 
-function Metric({ value, unit }: { value: string; unit: string }) {
+function Metric({ unit, value }: { unit: string; value: string }) {
   return (
     <HStack alignment="firstTextBaseline" spacing={5}>
-      <Text modifiers={[font({ size: 34, weight: "bold", design: "rounded" })]}>{value}</Text>
-      <Text modifiers={[font({ size: 17, weight: "semibold", design: "rounded" }), secondaryText]}>
+      <Text modifiers={[font({ design: "rounded", size: 34, weight: "bold" })]}>{value}</Text>
+      <Text modifiers={[font({ design: "rounded", size: 17, weight: "semibold" }), secondaryText]}>
         {unit}
       </Text>
     </HStack>
@@ -141,7 +141,7 @@ export default function HealthSummaryScreen() {
         <VStack
           alignment="leading"
           spacing={16}
-          modifiers={[frame({ maxWidth: Infinity, alignment: "leading" })]}
+          modifiers={[frame({ alignment: "leading", maxWidth: Infinity })]}
         >
           <HStack alignment="firstTextBaseline">
             <Text modifiers={[font({ size: 22, weight: "bold" })]}>Pinned</Text>
@@ -166,37 +166,37 @@ export default function HealthSummaryScreen() {
                 <Metric value="37" unit="ms" />
               </VStack>
               <Spacer />
-              <ZStack modifiers={[frame({ width: 150, height: 50 })]}>
+              <ZStack modifiers={[frame({ height: 50, width: 150 })]}>
                 {HRV_LINE_OFFSETS.map((dy) => (
                   <Chart
                     key={dy}
                     data={HRV_DATA}
                     type="line"
                     showGrid={false}
-                    lineStyle={{ color: lineGray, pointStyle: "circle", pointSize: 1 }}
-                    modifiers={[frame({ width: 150, height: 50 }), offset({ y: dy })]}
+                    lineStyle={{ color: lineGray, pointSize: 1, pointStyle: "circle" }}
+                    modifiers={[frame({ height: 50, width: 150 }), offset({ y: dy })]}
                   />
                 ))}
                 <Chart
                   data={HRV_DOTS}
                   type="point"
                   showGrid={false}
-                  pointStyle={{ pointStyle: "circle", pointSize: 115 }}
-                  modifiers={[frame({ width: 150, height: 50 })]}
+                  pointStyle={{ pointSize: 115, pointStyle: "circle" }}
+                  modifiers={[frame({ height: 50, width: 150 })]}
                 />
                 <Chart
                   data={HRV_ENDPOINT}
                   type="point"
                   showGrid={false}
-                  pointStyle={{ pointStyle: "circle", pointSize: 115 }}
-                  modifiers={[frame({ width: 150, height: 50 })]}
+                  pointStyle={{ pointSize: 115, pointStyle: "circle" }}
+                  modifiers={[frame({ height: 50, width: 150 })]}
                 />
                 <Chart
                   data={HRV_FILL}
                   type="point"
                   showGrid={false}
-                  pointStyle={{ pointStyle: "circle", pointSize: 32 }}
-                  modifiers={[frame({ width: 150, height: 50 })]}
+                  pointStyle={{ pointSize: 32, pointStyle: "circle" }}
+                  modifiers={[frame({ height: 50, width: 150 })]}
                 />
               </ZStack>
             </HStack>
@@ -211,8 +211,8 @@ export default function HealthSummaryScreen() {
             />
             <Text
               modifiers={[
-                font({ size: 26, weight: "bold", design: "rounded" }),
-                padding({ top: 24, bottom: 4 }),
+                font({ design: "rounded", size: 26, weight: "bold" }),
+                padding({ bottom: 4, top: 24 }),
               ]}
             >
               No Data
@@ -234,7 +234,7 @@ export default function HealthSummaryScreen() {
                 type="bar"
                 showGrid={false}
                 barStyle={{ cornerRadius: 2, width: 12 }}
-                modifiers={[frame({ width: 112, height: 60 })]}
+                modifiers={[frame({ height: 60, width: 112 })]}
               />
             </HStack>
           </Card>
@@ -254,7 +254,7 @@ export default function HealthSummaryScreen() {
                 type="bar"
                 showGrid={false}
                 barStyle={{ cornerRadius: 2, width: 12 }}
-                modifiers={[frame({ width: 112, height: 60 })]}
+                modifiers={[frame({ height: 60, width: 112 })]}
               />
             </HStack>
           </Card>
@@ -265,7 +265,7 @@ export default function HealthSummaryScreen() {
 }
 
 const styles = StyleSheet.create({
-  scroll: { backgroundColor: "#F2F2F7", experimental_backgroundImage: SUMMARY_GRADIENT, flex: 1 },
   content: { gap: 16, paddingBottom: 24, paddingHorizontal: 20 },
   host: { backgroundColor: "transparent", width: "100%" },
+  scroll: { backgroundColor: "#F2F2F7", experimental_backgroundImage: SUMMARY_GRADIENT, flex: 1 },
 });

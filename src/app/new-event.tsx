@@ -36,7 +36,7 @@ const ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 // taller than Calendar's) and inset the cards further from the edges (iOS 26+);
 // `listSectionMargins` only applies per-section, not from the List.
 const SECTION_MODS = [
-  listRowInsets({ top: 7, leading: 16, bottom: 7, trailing: 16 }),
+  listRowInsets({ bottom: 7, leading: 16, top: 7, trailing: 16 }),
   listSectionMargins({ edges: "horizontal", length: 22 }),
 ];
 
@@ -58,7 +58,7 @@ export default function NewEventScreen() {
   const dateComponents = allDay ? (["date"] as const) : (["date", "hourAndMinute"] as const);
 
   return (
-    <Host style={{ flex: 1, backgroundColor: "transparent" }}>
+    <Host style={{ backgroundColor: "transparent", flex: 1 }}>
       <List modifiers={[listStyle("insetGrouped"), padding({ top: NEW_EVENT_HEADER_HEIGHT })]}>
         <Section modifiers={SECTION_MODS}>
           <TextField placeholder="Title" />

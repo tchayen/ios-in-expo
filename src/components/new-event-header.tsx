@@ -21,15 +21,15 @@ const BUTTON_SIZE = 44;
 export const NEW_EVENT_HEADER_HEIGHT = 16 + BUTTON_SIZE + 10 + 18 + 8;
 
 function HeaderButton({
-  systemName,
+  isDisabled = false,
   onPress,
   prominent = false,
-  isDisabled = false,
+  systemName,
 }: {
-  systemName: SFSymbol;
+  isDisabled?: boolean;
   onPress: () => void;
   prominent?: boolean;
-  isDisabled?: boolean;
+  systemName: SFSymbol;
 }) {
   const glassTint = isDisabled
     ? PlatformColor("systemGray3")
@@ -44,11 +44,11 @@ function HeaderButton({
         size={22}
         color={prominent ? "white" : PlatformColor("label")}
         modifiers={[
-          frame({ width: BUTTON_SIZE, height: BUTTON_SIZE }),
+          frame({ height: BUTTON_SIZE, width: BUTTON_SIZE }),
           glassEffect({
             glass: {
-              variant: "regular",
               interactive: true,
+              variant: "regular",
               ...(glassTint ? { tint: glassTint } : {}),
             },
             shape: "circle",
@@ -65,7 +65,7 @@ export function NewEventHeader() {
 
   return (
     <Host matchContents={{ vertical: true }}>
-      <VStack spacing={10} modifiers={[padding({ horizontal: 16, top: 16, bottom: 8 })]}>
+      <VStack spacing={10} modifiers={[padding({ bottom: 8, horizontal: 16, top: 16 })]}>
         <HStack>
           <HeaderButton systemName="xmark" onPress={() => router.back()} />
           <Spacer />
