@@ -6,7 +6,15 @@ import localPlugin from "./lint-rules/index.mjs";
 
 export default tseslint.config(
   {
-    ignores: [".expo/**", "android/**", "build/**", "coverage/**", "dist/**", "ios/**", "node_modules/**"],
+    ignores: [
+      ".expo/**",
+      "android/**",
+      "build/**",
+      "coverage/**",
+      "dist/**",
+      "ios/**",
+      "node_modules/**",
+    ],
   },
   ...tseslint.configs.recommended,
   reactHooks.configs.flat.recommended,
