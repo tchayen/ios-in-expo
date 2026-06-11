@@ -10,7 +10,7 @@ import {
   tag,
 } from "@expo/ui/swift-ui/modifiers";
 import { router } from "expo-router";
-import type { SFSymbol } from "expo-symbols";
+import { type SFSymbol } from "expo-symbols";
 import { useState } from "react";
 import { PlatformColor } from "react-native";
 
@@ -19,6 +19,16 @@ const BUTTON_SIZE = 44;
 // Header overlays the content, so the screen pads its top by this: top padding +
 // button row + VStack spacing + segmented control + bottom padding.
 export const NEW_EVENT_HEADER_HEIGHT = 16 + BUTTON_SIZE + 10 + 18 + 8;
+
+function getGlassTint(isDisabled: boolean, prominent: boolean) {
+  if (isDisabled) {
+    return PlatformColor("systemGray3");
+  }
+  if (prominent) {
+    return PlatformColor("systemBlue");
+  }
+  return null;
+}
 
 function HeaderButton({
   isDisabled = false,
@@ -31,11 +41,7 @@ function HeaderButton({
   prominent?: boolean;
   systemName: SFSymbol;
 }) {
-  const glassTint = isDisabled
-    ? PlatformColor("systemGray3")
-    : prominent
-      ? PlatformColor("systemBlue")
-      : undefined;
+  const glassTint = getGlassTint(isDisabled, prominent);
 
   return (
     <Button onPress={onPress} modifiers={[buttonStyle("plain"), disabled(isDisabled)]}>
@@ -49,7 +55,7 @@ function HeaderButton({
             glass: {
               interactive: true,
               variant: "regular",
-              ...(glassTint ? { tint: glassTint } : {}),
+              ...(glassTint !== null ? { tint: glassTint } : {}),
             },
             shape: "circle",
           }),
